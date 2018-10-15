@@ -36,7 +36,7 @@ class Application extends BaseApplication
   protected function setTheBaseUri()
   {
     $url = new UrlProvider();
-    $url->setBaseUri("/phalcon-test/");
+    $url->setBaseUri("/");
 
     return $url;
   }

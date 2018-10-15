@@ -1,0 +1,10 @@
+/*Child Theme Style Code Here*/
+@import "common/variables";
+@import "common/mixins";
+@import "common/global";
+@import "partials/header";
+@import "partials/footer";
+
+
+//pages
+@import "partials/pages/home";

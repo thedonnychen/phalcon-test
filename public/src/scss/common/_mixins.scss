@@ -1,0 +1,44 @@
+@mixin bp($media...) {
+	@each $mediatype in $media {
+		@include break-point($mediatype) {@content}
+	}
+}
+
+@mixin break-point($point) {
+	@if $point == small-mobile { // between 480 and 768px (large phones)
+		@media (max-width: 479px) { @content; }
+	}
+	@else if $point == mobile-portrait { // between 480 and 768px (large phones)
+		@media (min-width: 480px) and (max-width: 766px) { @content; }
+	}
+	@else if $point == mobile-landscape {
+		@media (max-width: 767px) { @content; }
+	}
+	@else if $point == mobile-landscape-iphonex {
+		@media (max-width: 812px) and (orientation: landscape) { @content; }
+	}
+	@else if $point == tablets {
+		@media (min-width: 768px) and (max-width: 991px) { @content; }
+	}
+	@else if $point == small-desktop { // everything smaller than bootstrap md breakpoint
+		@media (max-width: 992px) { @content; }
+	}
+	@else if $point == medium-desktop {
+		@media (min-width: 1024px) and (max-width: 1199px) { @content; }
+	}
+	@else if $point == exceptional-medium-desktop {
+		@media (min-width: 992px) and (max-width: 1235px) { @content; }
+	}
+  @else if $point == all-large-desktop {
+    @media (max-width: 1199px) { @content; }
+  }
+	@else if $point == large-desktop {
+		@media (min-width: 1200px) { @content; }
+	}
+	@else if $point == wqhd-desktop {
+		@media (min-width: 2400px) { @content; }
+	}
+	@else if $point == uhd-desktop {
+		@media (min-width: 3600px) { @content; }
+	}
+}
