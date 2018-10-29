@@ -1,12 +1,23 @@
-<?php
+<html>
+    <head>
+        <title>Some amazing website</title>
 
-echo "<h1>Hello!</h1>";
+        <?php $this->assets->outputCss(); ?>
+    </head>
 
-echo PHP_EOL;
+    <body>
+        <div class="container">
 
-echo PHP_EOL;
+        <h1>
+            <?= 
+                $this->tag->linkTo(
+                    'phalcon-test/signup',
+                    'Sign Up Here!'
+                );
+            ?>
+        </h1>
+        </div>
 
-echo $this->tag->linkTo(
-    'signup',
-    'Sign Up Here!'
-);
+        <?php $this->assets->outputJs(); ?>
+    </body>
+<html>

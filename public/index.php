@@ -9,16 +9,26 @@ use Phalcon\Mvc\Url as UrlProvider;
 
 use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
 
+define('BASE_PATH', dirname(__DIR__));
+define('APP_PATH', BASE_PATH . '/app');
+
 class Application extends BaseApplication
 {
   protected function registerDirectories()
   {
     $loader = new Loader();
 
+    // $loader->registerDirs(
+    //   [
+    //       "../app/controllers/",
+    //       "../app/models/",
+    //   ]
+    // );
+
     $loader->registerDirs(
       [
-          "../app/controllers/",
-          "../app/models/",
+          APP_PATH . '/controllers/',
+          APP_PATH . '/models/',
       ]
     );
 
@@ -29,6 +39,7 @@ class Application extends BaseApplication
   {
     $view = new View();
     $view->setViewsDir("../app/views/");
+    // $view->setViewsDir(APP_PATH . '/views/');
 
     return $view;
   }
@@ -36,7 +47,7 @@ class Application extends BaseApplication
   protected function setTheBaseUri()
   {
     $url = new UrlProvider();
-    $url->setBaseUri("/");
+    $url->setBaseUri('/');
 
     return $url;
   }
@@ -46,7 +57,7 @@ class Application extends BaseApplication
     return new DbAdapter(array(
         "host"     => "localhost",
         "username" => "root",
-        "password" => "root",
+        "password" => "1234",
         "dbname"   => "phalcon-test"
     ));
   }
@@ -59,7 +70,7 @@ class Application extends BaseApplication
 
     $this->setDI($di);
     $this->registerDirectories();
-    $di['db'] = $this->setTheDb();
+    $di->set('db', $this->setTheDb() );
   }
 
   public function init()
@@ -71,4 +82,6 @@ class Application extends BaseApplication
 
 $application = new Application();
 $application->init();
+
+
 
