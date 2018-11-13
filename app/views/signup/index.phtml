@@ -1,41 +1,38 @@
-<html>
-    <head>
-        <title>Some amazing website</title>
+<div class="container">
 
-        <?php $this->assets->outputCss(); ?>
-    </head>
+    <p><?php echo $this->flashSession->output() ?></p>
 
-    <body>
-        <div class="container">
+    <?= $this->tag->form("phalcon-test/signup/submit"); ?>
 
-        <?= $this->tag->form("phalcon-test/signup/register"); ?>
-
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input id="name" class="form-control" type="text" />
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input id="password" class="form-control" type="password" />
-            </div>
-
-            <div class="form-group">
-                <label for="password-confirm">Confirm Password</label>
-                <input id="password-confirm" class="form-control" type="password" />
-            </div>
-        
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input id="email" class="form-control" type="text" />
-            </div>
-        
-            <input type="submit" class="btn btn-primary" value="Register" />
-        </form>
-
-        
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <?= $form->render('first_name'); ?>
         </div>
 
-        <?php $this->assets->outputJs(); ?>
-    </body>
-<html>
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <?= $form->render('last_name'); ?>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <?= $form->render('email'); ?>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <?= $form->render('password'); ?>
+        </div>
+
+        <div class="form-group">
+            <label for="password_confirm">Confirm Password</label>
+            <?= $form->render('password_confirm'); ?>
+        </div>
+
+        <div class="form-group">
+            <?= $form->render('submit'); ?>
+        </div>
+        
+    <?= $this->tag->endForm() ?>
+
+</div>

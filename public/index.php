@@ -1,83 +1,129 @@
 <?php
 
-use Phalcon\Loader;
-use Phalcon\Di\FactoryDefault;
-use Phalcon\Mvc\Application as BaseApplication;
+use Phalcon\Loader,
+    Phalcon\DiInterface,
+    Phalcon\Di\FactoryDefault,
+    Phalcon\Mvc\Application as BaseApplication,
+    Phalcon\Mvc\View,
+    Phalcon\Mvc\Url as UrlProvider,
+    Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter,
+    Phalcon\Flash\Direct as FlashDirect,
+    Phalcon\Flash\Session as FlashSession,
+    Phalcon\Session\Adapter\Files as Session;
 
-use Phalcon\Mvc\View;
-use Phalcon\Mvc\Url as UrlProvider;
+error_reporting(E_ALL);
 
-use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
+define( 'BASE_DIR', dirname(__DIR__) );
+define( 'APP_DIR', BASE_DIR . '/app' );
 
-define('BASE_PATH', dirname(__DIR__));
-define('APP_PATH', BASE_PATH . '/app');
+define( 'BASE_PATH', dirname(__DIR__));
+define( 'APP_PATH', BASE_PATH . '/app');
 
 class Application extends BaseApplication
 {
-  protected function registerDirectories()
-  {
-    $loader = new Loader();
+    protected function registerAutoloaders()
+    {
+        $loader = new Loader();
 
-    // $loader->registerDirs(
-    //   [
-    //       "../app/controllers/",
-    //       "../app/models/",
-    //   ]
-    // );
+        $loader->registerNamespaces([
+            'Eaty\Libraries'    => APP_DIR . '/libraries/',
+            'Eaty\Controllers'  => APP_DIR . '/controllers/',
+            'Eaty\Models'       => APP_DIR . '/models/',
+            'Eaty\Forms'        => APP_DIR . '/forms/'
+        ]); 
 
-    $loader->registerDirs(
-      [
-          APP_PATH . '/controllers/',
-          APP_PATH . '/models/',
-      ]
-    );
+        $loader->registerDirs([
+            APP_PATH . '/libraries/',
+            APP_PATH . '/controllers/',
+            APP_PATH . '/models/',
+            APP_PATH . '/forms/'
+        ]);
 
-    $loader->register();
-  }
+        $loader->register();
+    }
 
-  protected function setTheViewsDirectory()
-  {
-    $view = new View();
-    $view->setViewsDir("../app/views/");
-    // $view->setViewsDir(APP_PATH . '/views/');
+    protected function setViewsDirectory()
+    {
+        $view = new View();
+        $view->setViewsDir("../app/views/");
 
-    return $view;
-  }
-
-  protected function setTheBaseUri()
-  {
-    $url = new UrlProvider();
-    $url->setBaseUri('/');
-
-    return $url;
-  }
-
-  protected function setTheDb()
-  {
-    return new DbAdapter(array(
-        "host"     => "localhost",
+        return $view;
+    }
+    
+    protected function setDb()
+    {
+        return new DbAdapter(array(
+        "host" => "localhost",
         "username" => "root",
         "password" => "1234",
-        "dbname"   => "phalcon-test"
-    ));
-  }
+        "dbname" => "phalcon-test"
+        ));
+    }
 
-  public function registerServices()
-  {
-    $di = new FactoryDefault();
-    $di->setShared( 'view', $this->setTheViewsDirectory() );
-    $di->set('url', $this->setTheBaseUri() );
+    protected function setBaseUri()
+    {
+        $url = new UrlProvider();
+        $url->setBaseUri('/');
 
-    $this->setDI($di);
-    $this->registerDirectories();
-    $di->set('db', $this->setTheDb() );
-  }
+        return $url;
+    }
 
-  public function init()
-  {
-    $this->registerServices();
-    echo $this->handle()->getContent();
-  }
+    protected function setSession()
+    {
+        $session = new Session();
+        $session->start();
+
+        return $session;
+    }
+
+    protected function setFlashDirect()
+    {
+        $flash = new FlashDirect(
+            [
+                'error'   => 'alert alert-danger',
+                'success' => 'alert alert-success',
+                'notice'  => 'alert alert-info',
+                'warning' => 'alert alert-warning',
+            ]
+        );
+
+        return $flash;
+    }
+
+    protected function setFlashSession()
+    {
+        $flash = new FlashSession(
+            [
+                'error'   => 'alert alert-danger',
+                'success' => 'alert alert-success',
+                'notice'  => 'alert alert-info',
+                'warning' => 'alert alert-warning',
+            ]
+        );
+
+        return $flash;
+    }
+
+    public function registerServices()
+    {
+        $di = new FactoryDefault();
+
+        $this->setDI($di);
+        $this->registerAutoloaders();
+
+        $di->set('db', $this->setDb());
+        $di->setShared('view', $this->setViewsDirectory());
+        $di->setShared('session', $this->setSession());
+        $di->set('url', $this->setBaseUri());
+        $di->set('flash', $this->setFlashDirect());
+        $di->set('flashSession', $this->setFlashSession());
+    }
+
+    public function init()
+    {
+        $this->registerServices();
+        echo $this->handle()->getContent();
+    }
 }
 
 $application = new Application();

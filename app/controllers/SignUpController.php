@@ -1,49 +1,62 @@
 <?php
 
-use Phalcon\Mvc\Controller;
-use PhalconTest\Libraries\MyValidation;
-
+use Phalcon\Mvc\Controller,
+    Phalcon\Http\Request,
+    Eaty\Forms\UserSignUpForm,
+    Eaty\Models\Users;
+    
 class SignupController extends Controller
 {
-    public function indexAction()
+    public $users;
+
+    public function initialize()
     {
-        $this->assets->addCss('https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css');
-        $this->assets->addJs('https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js');
+        $this->users = new Users();
     }
 
-    public function registerAction()
+    public function indexAction()
     {
-        $user = new Users();
-        $validation = new MyValidation();
+        $this->view->form = new UserSignUpForm();
+    }
+
+    public function submitAction()
+    {
+        $form = new UserSignUpForm();
 
         if (!$this->request->isPost()) {
-            return $this->response->redirect('user/register');
+            return $this->response->redirect('/phalcon-test/signup');
         }
 
-        $user->setPassword($this->security->hash($_POST['password']));
+        $form->bind($_POST, $this->users);
         
-        // Store and check for errors
-        $success = $user->save(
-            $this->request->getPost(),
-            [
-                "name",
-                "email",
-                "password"
-            ]
-        );
+        $this->users->setPassword($this->security->hash($_POST['password']));
 
-        if ($success) {
-            echo "Thanks for registering!";
-        } else {
-            echo "Sorry, the following problems were generated: ";
+        if (!$form->isValid()) {
+            foreach ($form->getMessages() as $message) {
 
-            $messages = $validation->validate($_POST);
-
-            foreach ($messages as $message) {
-                echo $message->getMessage(), "<br/>";
+                $this->flashSession->error($message);
+                $this->dispatcher->forward([
+                    'controller' => $this->router->getControllerName(),
+                    'action'     => 'index',
+                ]);
+                return;
             }
         }
-        
+
+        if (!$this->users->save()) {
+            foreach ($this->users->getMessages() as $m) {
+                $this->flashSession->error($m);
+                $this->dispatcher->forward([
+                    'controller' => $this->router->getControllerName(),
+                    'action'     => 'index',
+                ]);
+                return;
+            }
+        }
+
+        $this->flashSession->success('Thanks for registering!');
+        return $this->response->redirect('/phalcon-test/signup');
+
         $this->view->disable();
     }
 }
