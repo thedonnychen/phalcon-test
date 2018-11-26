@@ -51,8 +51,16 @@ class LoginController extends Controller
 
         if ($user) {
             if ($this->security->checkHash($password, $user->password)) {
-                 $this->flashSession->success("Login Success");
-                return $this->response->redirect('phalcon-test/login');
+
+                $this->session->set( 'user_id', $user->getId() );
+                $this->session->set( 'user_first_name', $user->getFirstName() );
+                $this->session->set( 'user_last_name', $user->getLastName() );
+                $this->session->set( 'user_email', $user->getEmail() );
+                $this->session->set( 'user_password', $user->getPassword() );
+
+                
+                return $this->response->redirect('phalcon-test/account');
+                $this->flashSession->success("Login Success");
             }
         }
 

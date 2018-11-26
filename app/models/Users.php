@@ -17,10 +17,20 @@ class Users extends Model
         return $this;
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function setFirstName($first_name)
     {
         $this->first_name = $first_name;
         return $this;
+    }
+
+    public function getFirstName()
+    {
+        return $this->first_name;
     }
 
     public function setLastName($last_name)
@@ -30,10 +40,21 @@ class Users extends Model
 
     }
 
+    public function getLastName()
+    {
+        return $this->last_name;
+
+    }
+
     public function setEmail($email)
     {
         $this->email = $email;
         return $this;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     public function setPassword($password)

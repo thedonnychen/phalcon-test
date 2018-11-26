@@ -1,0 +1,16 @@
+<div class="container">
+    <h2>User Profile</h2>
+    <?= $this->tag->form("phalcon-test/account/editSubmit"); ?>
+    <hr>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Hello, <?= $this->session->get('user_first_name') ?> <?= $this->session->get('user_last_name') ?>!</h5>
+            <a href="/phalcon-test/account/edit" class="btn btn-primary">
+                Edit Account
+            </a>
+            <a href="/phalcon-test/logout" class="btn btn-danger">
+                Logout
+            </a>
+        </div>
+    </div>
+</div>
